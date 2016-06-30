@@ -415,10 +415,11 @@ public abstract class SettingsPreferenceFragment extends PreferenceFragment
         for (Preference p : mPreferenceCache.values()) {
             group.removePreference(p);
         }
+        mPreferenceCache = null;
     }
 
     protected int getCachedCount() {
-        return mPreferenceCache.size();
+        return mPreferenceCache != null ? mPreferenceCache.size() : 0;
     }
 
     private void highlightPreference(String key) {
