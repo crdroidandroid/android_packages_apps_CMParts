@@ -160,23 +160,11 @@
             android:name=".statusbar.StatusBarSettings"
             android:label="@string/status_bar_title"
             android:targetActivity="PartsActivity">
-            <intent-filter android:priority="1">
+            <intent-filter>
                 <action android:name="com.android.settings.action.EXTRA_SETTINGS" />
                 <action android:name="org.cyanogenmod.cmparts.STATUS_BAR_SETTINGS" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-            <meta-data
-                android:name="com.android.settings.category"
-                android:value="com.android.settings.category.system" />
-            <meta-data
-                android:name="com.android.settings.icon"
-                android:resource="@drawable/ic_settings_statusbar" />
-            <meta-data
-                android:name="org.cyanogenmod.settings.summary.receiver"
-                android:value="org.cyanogenmod.cmparts.PartsUpdater" />
-            <meta-data
-                android:name="org.cyanogenmod.settings.summary.key"
-                android:value="status_bar_settings" />
         </activity-alias>
 
         <!-- Anonymous Statistics -->
