@@ -33,11 +33,6 @@
           android:fragment="org.cyanogenmod.cmparts.notificationlight.BatteryLightSettings"
           cm:xmlRes="@xml/battery_light_settings" />
 
-    <part android:key="button_settings"
-          android:title="@string/button_pref_title"
-          android:fragment="org.cyanogenmod.cmparts.input.ButtonSettings"
-          cm:xmlRes="@xml/button_settings" />
-
     <part android:key="contributors"
           android:title="@string/contributors_cloud_fragment_title"
           android:fragment="org.cyanogenmod.cmparts.contributors.ContributorsCloudFragment" />
@@ -67,11 +62,6 @@
           android:title="@string/display_rotation_title"
           android:fragment="org.cyanogenmod.cmparts.hardware.DisplayRotation"
           cm:xmlRes="@xml/display_rotation" />
-
-    <part android:key="power_menu"
-          android:title="@string/power_menu_title"
-          android:fragment="org.cyanogenmod.cmparts.input.PowerMenuActions"
-          cm:xmlRes="@xml/power_menu_settings" />
 
     <part android:key="privacy_guard_manager"
           android:title="@*cyanogenmod.platform:string/privacy_guard_manager_title"

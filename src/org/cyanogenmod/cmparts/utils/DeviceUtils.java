@@ -31,15 +31,17 @@ import android.provider.Settings;
 import android.text.TextUtils;
 import android.view.Surface;
 
-import org.cyanogenmod.cmparts.input.ButtonSettings;
-
 public class DeviceUtils {
+
+    // Masks for checking presence of hardware keys.
+    // Must match values in frameworks/base/core/res/res/values/config.xml
+    public static final int KEY_MASK_VOLUME = 0x40;
 
     /* returns whether the device has volume rocker or not. */
     public static boolean hasVolumeRocker(Context context) {
         final int deviceKeys = context.getResources().getInteger(
                 com.android.internal.R.integer.config_deviceHardwareKeys);
-        return (deviceKeys & ButtonSettings.KEY_MASK_VOLUME) != 0;
+        return (deviceKeys & KEY_MASK_VOLUME) != 0;
     }
 
     public static boolean isPackageInstalled(Context context, String pkg, boolean ignoreState) {
