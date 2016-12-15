@@ -16,11 +16,11 @@
 
 package org.cyanogenmod.cmparts.notificationlight;
 
-import android.app.NotificationManager;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceGroup;
 import android.support.v7.preference.PreferenceScreen;
@@ -41,6 +41,7 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
     private static final String LOW_COLOR_PREF = "low_color";
     private static final String MEDIUM_COLOR_PREF = "medium_color";
     private static final String FULL_COLOR_PREF = "full_color";
+    private static final String REALLY_FULL_COLOR_PREF = "really_full_color";
     private static final String LIGHT_ENABLED_PREF = "battery_light_enabled";
     private static final String PULSE_ENABLED_PREF = "battery_light_pulse";
 
@@ -48,6 +49,7 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
     private ApplicationLightPreference mLowColorPref;
     private ApplicationLightPreference mMediumColorPref;
     private ApplicationLightPreference mFullColorPref;
+    private ApplicationLightPreference mReallyFullColorPref;
     private CMSystemSettingSwitchPreference mLightEnabledPref;
     private CMSystemSettingSwitchPreference mPulseEnabledPref;
 
@@ -67,15 +69,13 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
         mLightEnabledPref = (CMSystemSettingSwitchPreference) prefSet.findPreference(LIGHT_ENABLED_PREF);
         mPulseEnabledPref = (CMSystemSettingSwitchPreference) prefSet.findPreference(PULSE_ENABLED_PREF);
 
-        final NotificationManager nm = getContext().getSystemService(NotificationManager.class);
-
-        if (!nm.doLightsSupport(NotificationManager.LIGHTS_PULSATING_LED) ||
-                nm.doLightsSupport(NotificationManager.LIGHTS_SEGMENTED_BATTERY_LED)) {
+        if (!getResources().getBoolean(com.android.internal.R.bool.config_ledCanPulse) ||
+                getResources().getBoolean(org.cyanogenmod.platform.internal.R.bool.config_useSegmentedBatteryLed)) {
             mGeneralPrefs.removePreference(mPulseEnabledPref);
         }
 
-        // Does the device support changing battery LED colors?
-        if (nm.doLightsSupport(NotificationManager.LIGHTS_RGB_BATTERY_LED)) {
+        // Does the Device support changing battery LED colors?
+        if (getResources().getBoolean(com.android.internal.R.bool.config_multiColorBatteryLed)) {
             setHasOptionsMenu(true);
 
             // Low, Medium and full color preferences
@@ -87,6 +87,9 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
 
             mFullColorPref = (ApplicationLightPreference) prefSet.findPreference(FULL_COLOR_PREF);
             mFullColorPref.setOnPreferenceChangeListener(this);
+
+            mReallyFullColorPref = (ApplicationLightPreference) prefSet.findPreference(REALLY_FULL_COLOR_PREF);
+            mReallyFullColorPref.setOnPreferenceChangeListener(this);
         } else {
             prefSet.removePreference(prefSet.findPreference("colors_list"));
             resetColors();
@@ -122,6 +125,12 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
                     res.getInteger(com.android.internal.R.integer.config_notificationsBatteryFullARGB));
             mFullColorPref.setAllValues(fullColor, 0, 0, false);
         }
+
+        if (mReallyFullColorPref != null) {
+            int reallyFullColor = Settings.System.getInt(resolver, Settings.System.BATTERY_LIGHT_REALLY_FULL_COLOR,
+                    res.getInteger(com.android.internal.R.integer.config_notificationsBatteryFullARGB));
+            mReallyFullColorPref.setAllValues(reallyFullColor, 0, 0, false);
+        }
     }
 
     /**
@@ -139,19 +148,17 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
             CMSettings.System.putInt(resolver, CMSettings.System.BATTERY_LIGHT_MEDIUM_COLOR, color);
         } else if (key.equals(FULL_COLOR_PREF)) {
             CMSettings.System.putInt(resolver, CMSettings.System.BATTERY_LIGHT_FULL_COLOR, color);
+        } else if (key.equals(REALLY_FULL_COLOR_PREF)) {
+            Settings.System.putInt(resolver, Settings.System.BATTERY_LIGHT_REALLY_FULL_COLOR, color);
         }
     }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        final NotificationManager nm = getContext().getSystemService(NotificationManager.class);
-        if (nm.doLightsSupport(NotificationManager.LIGHTS_RGB_BATTERY_LED)) {
-            menu.add(0, MENU_RESET, 0, R.string.reset)
-                    .setIcon(R.drawable.ic_settings_backup_restore)
-                    .setAlphabeticShortcut('r')
-                    .setShowAsActionFlags(
-                            MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
-        }
+        menu.add(0, MENU_RESET, 0, R.string.reset)
+                .setIcon(R.drawable.ic_settings_backup_restore)
+                .setAlphabeticShortcut('r')
+                .setShowAsActionFlags(MenuItem.SHOW_AS_ACTION_ALWAYS | MenuItem.SHOW_AS_ACTION_WITH_TEXT);
     }
 
     @Override
@@ -175,6 +182,8 @@ public class BatteryLightSettings extends SettingsPreferenceFragment implements
                 res.getInteger(com.android.internal.R.integer.config_notificationsBatteryMediumARGB));
         CMSettings.System.putInt(resolver, CMSettings.System.BATTERY_LIGHT_FULL_COLOR,
                 res.getInteger(com.android.internal.R.integer.config_notificationsBatteryFullARGB));
+        Settings.System.putInt(resolver, Settings.System.BATTERY_LIGHT_REALLY_FULL_COLOR,
+                res.getInteger(com.android.internal.R.integer.config_notificationsBatteryReallyFullARGB));
         refreshDefault();
     }
 
