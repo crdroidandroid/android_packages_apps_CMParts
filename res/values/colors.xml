@@ -16,7 +16,7 @@
 -->
 <resources>
     <color name="theme_accent">@android:color/white</color>
-    <color name="navbar_edit_icon_color">@*android:color/material_pixel_blue_bright</color>
+    <color name="navbar_edit_icon_color">@*android:color/accent_material_dark</color>
     <color name="divider">#ffe0e0e0</color>
     <color name="setup_wizard_wifi_color_dark">#89ffffff</color>
 
